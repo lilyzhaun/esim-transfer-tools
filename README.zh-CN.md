@@ -1,8 +1,8 @@
-# eSIM transfer
+# eSIM Transfer Tools
 
 通过 Google Play 服务转出当前 Android 设备上的 SIM，也可用 USB 读卡器只读检查 SIM 卡信息。
 
-[下载正式版](https://github.com/lilyzhaun/esim-transfer/releases) · [English](README.md)
+[下载正式版](https://github.com/lilyzhaun/esim-transfer-tools/releases) · [English](README.md)
 
 ## 工作原理
 

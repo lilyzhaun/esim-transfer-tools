@@ -1,8 +1,8 @@
-# eSIM transfer
+# eSIM Transfer Tools
 
 Android application for transferring a SIM from the current Android device through Google Play services and inspecting SIM cards in USB readers.
 
-[Downloads](https://github.com/lilyzhaun/esim-transfer/releases) · [简体中文](README.zh-CN.md)
+[Downloads](https://github.com/lilyzhaun/esim-transfer-tools/releases) · [简体中文](README.zh-CN.md)
 
 ## How it works
 
