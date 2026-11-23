@@ -4,6 +4,12 @@ Android application for transferring a SIM from the current Android device throu
 
 [Downloads](https://github.com/lilyzhaun/esim-transfer/releases) · [简体中文](README.zh-CN.md)
 
+## How it works
+
+This diagram shows the transfer paths in the official signed APK. Builds from this repository use Google Play services for transfers and the USB reader for read-only diagnostics.
+
+![Official APK workflow, from SIM access through carrier verification to the transfer result](media/transfer-workflow-en.png)
+
 ## Use
 
 Enable the module in LSPosed, select Google Play services in its scope, and reload Google Play services. Open the app and connect the service. Select the source SIM, enter the target EID and IMEI and any carrier-required fields, then complete the system's source-device verification. Use the result on the target device.

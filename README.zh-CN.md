@@ -4,6 +4,12 @@
 
 [下载正式版](https://github.com/lilyzhaun/esim-transfer/releases) · [English](README.md)
 
+## 工作原理
+
+下图展示正式签名 APK 的转移流程。自行编译的版本通过 Google Play 服务发起转移，USB 读卡器仅用于只读诊断。
+
+![正式安装包工作原理：从读取源 SIM、运营商认证到获取办理结果](media/transfer-workflow-zh-CN.png)
+
 ## 使用
 
 在 LSPosed 中启用模块，作用域勾选 Google Play 服务，重新加载 Google Play 服务后回到应用连接。选择源 SIM，填写目标 EID、IMEI 和运营商要求的信息，按系统提示验证源设备身份，再在目标设备使用返回的下载信息。
