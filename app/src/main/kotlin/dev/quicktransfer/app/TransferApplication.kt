@@ -8,11 +8,14 @@ import io.github.libxposed.service.XposedService
 import io.github.libxposed.service.XposedServiceHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import dev.quicktransfer.app.local.UsbSimReader
 
 class TransferApplication : Application(), XposedServiceHelper.OnServiceListener {
     val library by lazy { LocalStore(this) }
     val taskLogs by lazy { TaskLogStore(this) }
     val sharedData by lazy { dev.quicktransfer.app.data.SharedUserData(this, library, taskLogs) }
+    internal val usbReader by lazy { UsbSimReader(this) }
+
     companion object {
         private val mutable = MutableStateFlow<XposedService?>(null)
         val framework = mutable.asStateFlow()
