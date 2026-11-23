@@ -108,7 +108,8 @@ class TransferViewModel(application: Application) : AndroidViewModel(application
                 check(library.records.value.none { it.blocksNewTransfer }) { "已有转移任务等待结果，请先处理原任务" }
                 val host = requireNotNull(HostRegistry.connection.value) { "服务尚未连接" }
                 id = withContext(Dispatchers.IO) {
-                    host.prepare(JSONObject().put("subId", source.subId).put("target", target.json()).toString())
+                    val request = JSONObject().put("subId", source.subId).put("target", target.json())
+                    host.prepare(request.toString())
                 }
                 ready(id)
                 val intent = sourceIntent()
