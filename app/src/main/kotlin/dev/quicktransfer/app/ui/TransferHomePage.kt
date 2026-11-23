@@ -17,7 +17,6 @@ internal fun TransferHomePage(state: TransferUiState, records: List<TransferReco
     val current = records.firstOrNull { it.blocksNewTransfer }
         ?: records.maxByOrNull { it.createdAt }
     PageFrame("转移", message = state.message) {
-        item { FlowHeading("从哪里转出？", "将已有线路转到你的目标设备。") }
         if (current != null) {
             item { SectionLabel(if (current.blocksNewTransfer) "当前转移" else "最近一次转移") }
             item { TaskSummaryCard(current, { openTask(current.id) }, active) }

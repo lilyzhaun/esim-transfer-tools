@@ -61,6 +61,11 @@ fun TransferUi(model: TransferViewModel = viewModel()) {
     var recordId by rememberSaveable { mutableStateOf<String?>(null) }
     val page = pages.lastOrNull()
     fun navigate(route: String) { if (pages.lastOrNull() != route) { model.clearMessage(); pages += route } }
+    fun startTransfer(source: SourceLine) {
+        model.start(source, TargetDevice(targetId ?: java.util.UUID.randomUUID().toString(), targetName.ifBlank { "本次目标设备" }, eid, imei, targetDetails)) {
+            recordId = it; navigate("record")
+        }
+    }
     val back: () -> Unit = {
         if (pages.lastOrNull() == "websheet") model.leaveWebSheet(recordId)
         model.clearMessage(); pages = pages.dropLast(1)
@@ -106,7 +111,7 @@ fun TransferUi(model: TransferViewModel = viewModel()) {
                     "websheet" -> WebSheetRoute
                     "task_log" -> TaskLogRoute
                       "license" -> LicenseRoute
-                        "local_transfer" -> LocalTransferRoute
+                         "local_transfer" -> LocalTransferRoute
                     else -> null
                 } }
                 LaunchedEffect(pages, destinations.size) { if (pages.size != destinations.size) pages = emptyList() }
@@ -120,15 +125,11 @@ fun TransferUi(model: TransferViewModel = viewModel()) {
                               { imei = it; targetId = null; targetName = ""; model.clearMessage() },
                               model::connect, model::openManager, { navigate("source") }, { navigate("pick_target") },
                               { id -> recordId = id; navigate("record") }, targetDetails,
-                              { targetDetails = it; targetId = null; targetName = ""; model.clearMessage() }, {
-                                  liveState.sources.firstOrNull { it.subId == selectedSource }?.let { source ->
-                                      model.start(source, TargetDevice(targetId ?: java.util.UUID.randomUUID().toString(), targetName.ifBlank { "本次目标设备" }, eid, imei, targetDetails)) {
-                                          recordId = it; navigate("record")
-                                      }
-                                  }
-                              }, { navigate("diagnostics") }, back = back)
-                      }
-                    entry<AppearanceRoute> { AppearancePage(appearanceStore, back) }
+                               { targetDetails = it; targetId = null; targetName = ""; model.clearMessage() }, {
+                                   liveState.sources.firstOrNull { it.subId == selectedSource }?.let(::startTransfer)
+                               }, { navigate("diagnostics") }, back = back)
+                       }
+                     entry<AppearanceRoute> { AppearancePage(appearanceStore, back) }
                      entry<DeviceEditorRoute> {
                          val liveDevices by model.library.targets.collectAsState()
                           val initial = liveDevices.firstOrNull { it.id == editId } ?: if (useEditedTarget && editId != null)
@@ -141,7 +142,7 @@ fun TransferUi(model: TransferViewModel = viewModel()) {
                                  }
                                  if (useEditedTarget) {
                                       useEditedTarget = false
-                                      val flowIndex = pages.indexOfLast { it == "local_transfer" }
+                                       val flowIndex = pages.indexOfLast { it == "local_transfer" }
                                       pages = if (flowIndex >= 0) pages.take(flowIndex + 1) else emptyList()
                                       if (flowIndex < 0) rootRequest = RootPage.HOME
                                  } else back()
