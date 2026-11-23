@@ -61,6 +61,14 @@ class TransferViewModel(application: Application) : AndroidViewModel(application
             ?.putInt(Contract.APP_UID, Process.myUid())?.putString(Contract.DISCOVERY, UUID.randomUUID().toString())?.commit()
         Unit
     }
+    internal val supportsUsbReader = app.packageManager.hasSystemFeature(android.content.pm.PackageManager.FEATURE_USB_HOST)
+    internal val usbReaderState get() = app.usbReader.state
+    internal fun readUsbReader() {
+        if (supportsUsbReader) viewModelScope.launch { app.usbReader.scan() }
+    }
+    internal suspend fun usbLogRuns() = withContext(Dispatchers.IO) { app.usbReader.logs.runs() }
+    internal suspend fun usbLog(id: String) = withContext(Dispatchers.IO) { app.usbReader.logs.summary(id) }
+    internal suspend fun exportUsbLog(id: String, uri: Uri) = withContext(Dispatchers.IO) { app.usbReader.logs.export(id, uri) }
     fun requestScope() {
         val service = TransferApplication.framework.value ?: return openManager()
         service.requestScope(listOf(Contract.GMS), object : XposedService.OnScopeEventListener {

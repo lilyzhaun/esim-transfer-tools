@@ -12,7 +12,8 @@ import top.yukonga.miuix.kmp.preference.ArrowPreference
 
 @Composable
 internal fun TransferHomePage(state: TransferUiState, records: List<TransferRecord>, target: TargetDevice?,
-    local: () -> Unit, targets: () -> Unit, modes: () -> Unit, openTask: (String) -> Unit) {
+    local: () -> Unit, targets: () -> Unit, modes: () -> Unit, openTask: (String) -> Unit,
+    usb: (() -> Unit)? = null) {
     val active = LocalRouteActive.current
     val current = records.firstOrNull { it.blocksNewTransfer }
         ?: records.maxByOrNull { it.createdAt }
@@ -21,11 +22,13 @@ internal fun TransferHomePage(state: TransferUiState, records: List<TransferReco
             item { SectionLabel(if (current.blocksNewTransfer) "当前转移" else "最近一次转移") }
             item { TaskSummaryCard(current, { openTask(current.id) }, active) }
         }
-        if (state.supportsLocalSim) item { Card(Modifier.fillMaxWidth(), insideMargin = PaddingValues(0.dp)) {
-            ArrowPreference(title = "从本机 SIM 转出", summary = "读取此手机的 SIM，申请目标设备的 eSIM",
+        if (state.supportsLocalSim || usb != null) item { Card(Modifier.fillMaxWidth(), insideMargin = PaddingValues(0.dp)) {
+            if (state.supportsLocalSim) ArrowPreference(title = "从本机 SIM 转出", summary = "读取此手机的 SIM，申请目标设备的 eSIM",
                 onClick = local.takeIf { active && !state.busy }, modifier = Modifier)
+            if (usb != null) ArrowPreference(title = "USB 读卡器", summary = "只读 SIM 卡信息，查看读卡日志",
+                onClick = usb.takeIf { active }, modifier = Modifier)
         } }
-        if (!state.supportsLocalSim) item { Text("此设备没有可用的本机 SIM 转出功能。", color = uiColors().secondary, fontSize = 13.sp) }
+        if (!state.supportsLocalSim && usb == null) item { Text("此设备没有可用的本机 SIM 转出功能。", color = uiColors().secondary, fontSize = 13.sp) }
         item { SectionLabel("接收设备") }
         item { Card(Modifier.fillMaxWidth(), insideMargin = PaddingValues(0.dp)) {
             ArrowPreference(title = target?.name ?: "选择已保存的设备",

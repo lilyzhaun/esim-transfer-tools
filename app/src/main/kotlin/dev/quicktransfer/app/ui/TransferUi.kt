@@ -34,6 +34,8 @@ private data object CarriersRoute
 private data object WebSheetRoute
 private data object TaskLogRoute
 private data object LocalTransferRoute
+private data object UsbReaderRoute
+private data object UsbReaderLogRoute
 
 @Composable
 fun TransferUi(model: TransferViewModel = viewModel()) {
@@ -95,7 +97,8 @@ fun TransferUi(model: TransferViewModel = viewModel()) {
                         RootPage.HOME -> TransferHomePage(state, records,
                             if (IdentityRules.valid(eid, imei)) TargetDevice(targetId ?: "draft", targetName.ifBlank { "本次目标设备" }, eid, imei, targetDetails) else null,
                             { navigate("local_transfer") }, { navigate("pick_target") },
-                             { navigate("diagnostics") }, { id -> recordId = id; navigate("record") })
+                              { navigate("diagnostics") }, { id -> recordId = id; navigate("record") },
+                              usb = if (model.supportsUsbReader) ({ navigate("usb_reader") }) else null)
                          RootPage.DEVICES -> DevicesPage(devices,
                              { editId = null; useEditedTarget = false; navigate("device") },
                              { editId = it; useEditedTarget = false; navigate("device") })
@@ -112,6 +115,8 @@ fun TransferUi(model: TransferViewModel = viewModel()) {
                     "task_log" -> TaskLogRoute
                       "license" -> LicenseRoute
                          "local_transfer" -> LocalTransferRoute
+                          "usb_reader" -> UsbReaderRoute
+                          "usb_reader_log" -> UsbReaderLogRoute
                     else -> null
                 } }
                 LaunchedEffect(pages, destinations.size) { if (pages.size != destinations.size) pages = emptyList() }
@@ -129,7 +134,15 @@ fun TransferUi(model: TransferViewModel = viewModel()) {
                                    liveState.sources.firstOrNull { it.subId == selectedSource }?.let(::startTransfer)
                                }, { navigate("diagnostics") }, back = back)
                        }
-                     entry<AppearanceRoute> { AppearancePage(appearanceStore, back) }
+                        entry<UsbReaderRoute> {
+                            val reader by model.usbReaderState.collectAsState()
+                            UsbReaderPage(reader, back, model::readUsbReader, { navigate("usb_reader_log") })
+                        }
+                        entry<UsbReaderLogRoute> {
+                            val reader by model.usbReaderState.collectAsState()
+                            UsbReaderLogPage(reader.logId, back, model::usbLogRuns, model::usbLog, model::exportUsbLog)
+                       }
+                    entry<AppearanceRoute> { AppearancePage(appearanceStore, back) }
                      entry<DeviceEditorRoute> {
                          val liveDevices by model.library.targets.collectAsState()
                           val initial = liveDevices.firstOrNull { it.id == editId } ?: if (useEditedTarget && editId != null)

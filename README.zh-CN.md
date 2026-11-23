@@ -1,6 +1,6 @@
 # eSIM transfer
 
-通过 Google Play 服务转出当前 Android 设备上的 SIM，并保存接收设备下载信息的应用。
+通过 Google Play 服务转出当前 Android 设备上的 SIM，也可用 USB 读卡器只读检查 SIM 卡信息。
 
 [下载正式版](https://github.com/lilyzhaun/esim-transfer/releases) · [English](README.md)
 
@@ -11,6 +11,12 @@
 应用支持 miuix 外观、悬浮导航、常用目标设备和转移记录。取得下载信息不代表目标设备已经安装成功，实际资格由运营商、账户和设备决定。
 
 应用支持转移记录、运营商网页验证和任务日志导出。实际可用性取决于运营商及 Google Play 服务版本。
+
+### USB 读卡器
+
+在支持 USB Host（OTG）的 Android 设备上连接一个单槽 CCID 读卡器并插卡，打开 **转移 → USB 读卡器 → 读取读卡器**，按 Android 提示授权。支持短 APDU 和 T=0 TPDU。页面显示 ICCID 尾号和卡内运营商信息。此入口无需 LSPosed、可离线使用，不向 SIM 发鉴权或写入命令，也不提交读卡器转出。
+
+**读卡器日志**可查看本次或历史读取，并原样导出。日志默认只保存在应用私有目录；详细文件可能含完整卡号、IMSI 和卡片应答，请勿公开分享。
 
 App 界面保持简体中文；仓库的英文 README、代码说明和构建提示不改变应用语言。
 
